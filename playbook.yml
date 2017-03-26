@@ -1,0 +1,5 @@
+---
+- include: pb-install.yml
+  tags: install
+- include: pb-configure.yml
+  tags: configure

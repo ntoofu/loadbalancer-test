@@ -1,0 +1,33 @@
+- name: installation for dummy clients
+  hosts: client
+  tasks:
+    - name: install packages via portage
+      portage:
+        package: "{{item}}"
+        state: present
+      with_items:
+        - net-misc/curl
+        - net-analyzer/netcat
+        - net-analyzer/tcpdump
+    - name: dispatch udp echo client
+      copy:
+        src: bin/udp-ping
+        dest: /usr/local/bin/udp-ping
+
+- name: installation for dummy servers
+  hosts: server
+  tasks:
+    - name: install packages via portage
+      portage:
+        package: "{{item}}"
+        state: present
+      with_items:
+          - www-servers/nginx
+          - net-analyzer/netcat6
+          - net-analyzer/tcpdump
+      environment:
+        NGINX_MODULES_HTTP: 'access autoindex browser charset echo gzip limit_conn limit_req map memcached proxy referer rewrite split_clients ssi upstream_ip_hash userid uwsgi'
+    - name: dispatch udp echo service
+      copy:
+        src: bin/udp-pong
+        dest: /usr/local/bin/udp-pong
